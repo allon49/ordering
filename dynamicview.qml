@@ -126,6 +126,18 @@ Rectangle {
                             dragArea.DelegateModel.itemsIndex)
                 }
             }
+
+            Rectangle {
+                id: redTestRect
+
+                anchors.left: content.left
+                anchors.top: content.bottom
+                width: 20
+                height: 20
+
+                color: "red"
+            }
+
 //![3]
         }
     }
