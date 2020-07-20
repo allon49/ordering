@@ -59,79 +59,89 @@ Rectangle {
     Component {
         id: dragDelegate
 
-        MouseArea {
-            id: dragArea
 
-            property bool held: false
+        Rectangle {
+            id: tasksColumnItem
 
             anchors { left: parent.left; right: parent.right }
-            height: content.height
+            height: dragArea.height + redTestRect.height
+            width: dragArea.width
+            color: "green"
 
-            drag.target: held ? content : undefined
-            drag.axis: Drag.YAxis
+            MouseArea {
+                id: dragArea
 
-            onPressAndHold: held = true
-            onReleased: held = false
+                property bool held: false
 
-            Rectangle {
-                id: content
-//![0]
-                anchors {
-                    horizontalCenter: parent.horizontalCenter
-                    verticalCenter: parent.verticalCenter
-                }
-                width: dragArea.width; height: column.implicitHeight + 4
+                anchors { left: parent.left; right: parent.right }
+                height: content.height
 
-                border.width: 1
-                border.color: "lightsteelblue"
+                drag.target: held ? tasksColumnItem : undefined
+                drag.axis: Drag.YAxis
 
-                color: dragArea.held ? "lightsteelblue" : "white"
-                Behavior on color { ColorAnimation { duration: 100 } }
+                onPressAndHold: held = true
+                onReleased: held = false
 
-                radius: 2
-//![1]
-                Drag.active: dragArea.held
-                Drag.source: dragArea
-                Drag.hotSpot.x: width / 2
-                Drag.hotSpot.y: height / 2
-//![1]
-                states: State {
-                    when: dragArea.held
+                Rectangle {
+                    id: content
+    //![0]
+                    anchors.fill: dragArea
+                    width: dragArea.width; height: column.implicitHeight + 4
 
-                    ParentChange { target: content; parent: root }
-                    AnchorChanges {
-                        target: content
-                        anchors { horizontalCenter: undefined; verticalCenter: undefined }
+                    border.width: 1
+                    border.color: "lightsteelblue"
+
+                    color: dragArea.held ? "lightsteelblue" : "white"
+                    Behavior on color { ColorAnimation { duration: 100 } }
+
+                    radius: 2
+    //![1]
+                    Drag.active: dragArea.held
+                    Drag.source: dragArea
+                    Drag.hotSpot.x: width / 2
+                    Drag.hotSpot.y: height / 2
+    //![1]
+                    states: State {
+                        when: dragArea.held
+
+                        ParentChange { target: content; parent: root }
+                        AnchorChanges {
+                            target: content
+                            anchors { horizontalCenter: undefined; verticalCenter: undefined }
+                        }
                     }
-                }
 
-                Column {
-                    id: column
-                    anchors { fill: parent; margins: 2 }
+                    Column {
+                        id: column
+                        anchors { fill: parent; margins: 2 }
 
-                    Text { text: 'Name: ' + name }
-                    Text { text: 'Type: ' + type }
-                    Text { text: 'Age: ' + age }
-                    Text { text: 'Size: ' + size }
-                }
-//![2]
-            }
-//![3]
-            DropArea {
-                anchors { fill: parent; margins: 10 }
+                        Text { text: 'Name: ' + name }
+                        Text { text: 'Type: ' + type }
+                        Text { text: 'Age: ' + age }
+                        Text { text: 'Size: ' + size }
+                    }
 
-                onEntered: {
-                    visualModel.items.move(
-                            drag.source.DelegateModel.itemsIndex,
-                            dragArea.DelegateModel.itemsIndex)
+                    DropArea {
+                        anchors { fill:parent; margins: 10 }
+
+                        onEntered: {
+
+                            console.log("drag.source.parent.DelegateModel.itemsIndex" + drag.source.parent.DelegateModel.itemsIndex)
+                            console.log("dragArea.parent.DelegateModel.itemsIndex" + dragArea.parent.DelegateModel.itemsIndex)
+
+                            visualModel.items.move(
+                                    drag.source.parent.DelegateModel.itemsIndex,
+                                    dragArea.parent.DelegateModel.itemsIndex)
+                        }
+                    }
                 }
             }
 
             Rectangle {
                 id: redTestRect
 
-                anchors.left: content.left
-                anchors.top: content.bottom
+                anchors.left: dragArea.left
+                anchors.top: dragArea.bottom
                 width: 20
                 height: 20
 
