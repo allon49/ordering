@@ -79,14 +79,15 @@ Rectangle {
                 drag.target: held ? tasksColumnItem : undefined
                 drag.axis: Drag.YAxis
 
-                onPressAndHold: held = true
+                onPressed: held = true
                 onReleased: held = false
 
                 Rectangle {
                     id: content
     //![0]
-                    anchors.fill: dragArea
-                    width: dragArea.width; height: column.implicitHeight + 4
+                    anchors.fill: parent
+                    width: dragArea.width;
+                    height: column.implicitHeight + 4
 
                     border.width: 1
                     border.color: "lightsteelblue"
@@ -104,9 +105,9 @@ Rectangle {
                     states: State {
                         when: dragArea.held
 
-                        ParentChange { target: content; parent: root }
+                        ParentChange { target: tasksColumnItem; parent: root }
                         AnchorChanges {
-                            target: content
+                            target: tasksColumnItem
                             anchors { horizontalCenter: undefined; verticalCenter: undefined }
                         }
                     }
@@ -119,21 +120,7 @@ Rectangle {
                         Text { text: 'Type: ' + type }
                         Text { text: 'Age: ' + age }
                         Text { text: 'Size: ' + size }
-                    }
-
-                    DropArea {
-                        anchors { fill:parent; margins: 10 }
-
-                        onEntered: {
-
-                            console.log("drag.source.parent.DelegateModel.itemsIndex" + drag.source.parent.DelegateModel.itemsIndex)
-                            console.log("dragArea.parent.DelegateModel.itemsIndex" + dragArea.parent.DelegateModel.itemsIndex)
-
-                            visualModel.items.move(
-                                    drag.source.parent.DelegateModel.itemsIndex,
-                                    dragArea.parent.DelegateModel.itemsIndex)
-                        }
-                    }
+                    }        
                 }
             }
 
@@ -148,11 +135,51 @@ Rectangle {
                 color: "red"
             }
 
-//![3]
+            DropArea {
+                id: dropArea
+                anchors { fill:tasksColumnItem; margins: 30 }
+
+
+
+                Rectangle {
+                      id: dropRectangle
+
+                      anchors.fill: parent
+                      color: "red"
+
+                      states: [
+                          State {
+                              when: dropArea.containsDrag
+                              PropertyChanges {
+                                  target: dropRectangle
+                                  color: "grey"
+                              }
+                          }
+                      ]
+                  }
+
+
+                onExited: {
+                     console.log("ttt")
+                 }
+
+                onEntered: {
+
+                    console.log("drag.source.parent.DelegateModel.itemsIndex " + drag.source.parent.DelegateModel.itemsIndex)
+                    console.log("dragArea.parent.DelegateModel.itemsIndex " + dragArea.parent.DelegateModel.itemsIndex)
+
+    ////                            visualModel.items.move(
+    ////                                    drag.source.parent.DelegateModel.itemsIndex,
+    ////                                    dragArea.parent.DelegateModel.itemsIndex)
+
+    //                           // visualModel.items.move(3, 4)
+                }
+            }
+
         }
     }
-//![2]
-//![4]
+
+
     DelegateModel {
         id: visualModel
 
