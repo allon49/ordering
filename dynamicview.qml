@@ -59,123 +59,130 @@ Rectangle {
     Component {
         id: dragDelegate
 
-
         Rectangle {
-            id: tasksColumnItem
-
+            id: tasksColumnItemContainer
             anchors { left: parent.left; right: parent.right }
-            height: dragArea.height + redTestRect.height
+            height: tasksColumnItem.height
+
             width: dragArea.width
             color: "green"
 
-            MouseArea {
-                id: dragArea
+            Rectangle {
+                id: tasksColumnItem
 
-                property bool held: false
+                height: dragArea.height + redTestRect.height
+                width: parent.width
 
-                anchors { left: parent.left; right: parent.right }
-                height: content.height
+                color: "green"
 
-                drag.target: held ? tasksColumnItem : undefined
-                drag.axis: Drag.YAxis
+                MouseArea {
+                    id: dragArea
 
-                onPressed: held = true
-                onReleased: held = false
+                    property bool held: false
 
-                Rectangle {
-                    id: content
-    //![0]
-                    anchors.fill: parent
-                    width: dragArea.width;
-                    height: column.implicitHeight + 4
+                    anchors { left: parent.left; right: parent.right }
+                    height: content.height
 
-                    border.width: 1
-                    border.color: "lightsteelblue"
+                    drag.target: held ? tasksColumnItem : undefined
+                    drag.axis: Drag.YAxis
 
-                    color: dragArea.held ? "lightsteelblue" : "white"
-                    Behavior on color { ColorAnimation { duration: 100 } }
+                    onPressed: held = true
+                    onReleased: held = false
 
-                    radius: 2
-    //![1]
-                    Drag.active: dragArea.held
-                    Drag.source: dragArea
-                    Drag.hotSpot.x: width / 2
-                    Drag.hotSpot.y: height / 2
-    //![1]
-                    states: State {
-                        when: dragArea.held
+                    Rectangle {
+                        id: content
+        //![0]
+                        anchors.fill: parent
+                        width: dragArea.width;
+                        height: column.implicitHeight + 4
 
-                        ParentChange { target: tasksColumnItem; parent: root }
-                        AnchorChanges {
-                            target: tasksColumnItem
-                            anchors { horizontalCenter: undefined; verticalCenter: undefined }
+                        border.width: 1
+                        border.color: "lightsteelblue"
+
+                        color: dragArea.held ? "lightsteelblue" : "white"
+                        Behavior on color { ColorAnimation { duration: 100 } }
+
+                        radius: 2
+        //![1]
+                        Drag.active: dragArea.held
+                        Drag.source: dragArea
+                        Drag.hotSpot.x: width / 2
+                        Drag.hotSpot.y: height / 2
+        //![1]
+                        states: State {
+                            when: dragArea.held
+
+                            ParentChange { target: tasksColumnItem; parent: root }
+                            AnchorChanges {
+                                target: tasksColumnItem
+                                anchors { horizontalCenter: undefined; verticalCenter: undefined }
+                            }
+                        }
+
+                        Column {
+                            id: column
+                            anchors { fill: parent; margins: 2 }
+
+                            Text { text: 'Name: ' + name }
+                            Text { text: 'Type: ' + type }
+                            Text { text: 'Age: ' + age }
+                            Text { text: 'Size: ' + size }
                         }
                     }
+                }
 
-                    Column {
-                        id: column
-                        anchors { fill: parent; margins: 2 }
+                Rectangle {
+                    id: redTestRect
 
-                        Text { text: 'Name: ' + name }
-                        Text { text: 'Type: ' + type }
-                        Text { text: 'Age: ' + age }
-                        Text { text: 'Size: ' + size }
-                    }        
+                    anchors.left: dragArea.left
+                    anchors.top: dragArea.bottom
+                    width: 20
+                    height: 20
+
+                    color: "red"
                 }
             }
 
-            Rectangle {
-                id: redTestRect
-
-                anchors.left: dragArea.left
-                anchors.top: dragArea.bottom
-                width: 20
-                height: 20
-
-                color: "red"
-            }
 
             DropArea {
                 id: dropArea
+                anchors.left: tasksColumnItem.left
+                anchors.top: tasksColumnItem.top
+                width: tasksColumnItem.width
+                height: tasksColumnItem.height
+
+
                 anchors { fill:tasksColumnItem; margins: 30 }
 
-
-
                 Rectangle {
-                      id: dropRectangle
+                    id: dropRectangle
 
-                      anchors.fill: parent
-                      color: "red"
+                    anchors.fill: parent
+                    color: "red"
 
-                      states: [
-                          State {
-                              when: dropArea.containsDrag
-                              PropertyChanges {
-                                  target: dropRectangle
-                                  color: "grey"
-                              }
+                    states: [
+                      State {
+                          when: dropArea.containsDrag
+                          PropertyChanges {
+                              target: dropRectangle
+                              color: "grey"
                           }
-                      ]
-                  }
+                      }
+                    ]
+                }
 
-
-                onExited: {
-                     console.log("ttt")
-                 }
-
+                onExited: { console.log("ttt") }
                 onEntered: {
-
                     console.log("drag.source.parent.DelegateModel.itemsIndex " + drag.source.parent.DelegateModel.itemsIndex)
                     console.log("dragArea.parent.DelegateModel.itemsIndex " + dragArea.parent.DelegateModel.itemsIndex)
 
-    ////                            visualModel.items.move(
-    ////                                    drag.source.parent.DelegateModel.itemsIndex,
-    ////                                    dragArea.parent.DelegateModel.itemsIndex)
+                ////                            visualModel.items.move(
+                ////                                    drag.source.parent.DelegateModel.itemsIndex,
+                ////                                    dragArea.parent.DelegateModel.itemsIndex)
 
-    //                           // visualModel.items.move(3, 4)
+                //                           // visualModel.items.move(3, 4)
                 }
             }
-
         }
     }
 
@@ -197,7 +204,5 @@ Rectangle {
         spacing: 4
         cacheBuffer: 50
     }
-//![4]
-//![5]
 }
-//![5]
+
