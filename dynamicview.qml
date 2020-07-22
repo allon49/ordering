@@ -143,16 +143,10 @@ Rectangle {
                 }
             }
 
-
             DropArea {
                 id: dropArea
-                anchors.left: tasksColumnItem.left
-                anchors.top: tasksColumnItem.top
-                width: tasksColumnItem.width
-                height: tasksColumnItem.height
 
-
-                anchors { fill:tasksColumnItem; margins: 30 }
+                anchors { fill:tasksColumnItemContainer; margins: 30 }
 
                 Rectangle {
                     id: dropRectangle
