@@ -54,149 +54,61 @@ import QtQml.Models 2.1
 Rectangle {
     id: root
 
-    width: 300; height: 400
+    width: 1200; height: 400
 
-    Component {
-        id: dragDelegate
-
-        Rectangle {
-            id: tasksColumnItemContainer
-            anchors { left: parent.left; right: parent.right }
-            height: tasksColumnItem.height
-
-            width: dragArea.width
-            color: "green"
-
-            Rectangle {
-                id: tasksColumnItem
-
-                height: dragArea.height + redTestRect.height
-                width: parent.width
-
-                color: "green"
-
-                MouseArea {
-                    id: dragArea
-
-                    property bool held: false
-
-                    anchors { left: parent.left; right: parent.right }
-                    height: content.height
-
-                    drag.target: held ? tasksColumnItem : undefined
-                    drag.axis: Drag.YAxis
-
-                    onPressed: held = true
-                    onReleased: held = false
-
-                    Rectangle {
-                        id: content
-        //![0]
-                        anchors.fill: parent
-                        width: dragArea.width;
-                        height: column.implicitHeight + 4
-
-                        border.width: 1
-                        border.color: "lightsteelblue"
-
-                        color: dragArea.held ? "lightsteelblue" : "white"
-                        Behavior on color { ColorAnimation { duration: 100 } }
-
-                        radius: 2
-        //![1]
-                        Drag.active: dragArea.held
-                        Drag.source: dragArea
-                        Drag.hotSpot.x: width / 2
-                        Drag.hotSpot.y: height / 2
-        //![1]
-                        states: State {
-                            when: dragArea.held
-
-                            ParentChange { target: tasksColumnItem; parent: root }
-                            AnchorChanges {
-                                target: tasksColumnItem
-                                anchors { horizontalCenter: undefined; verticalCenter: undefined }
-                            }
-                        }
-
-                        Column {
-                            id: column
-                            anchors { fill: parent; margins: 2 }
-
-                            Text { text: 'Name: ' + name }
-                            Text { text: 'Type: ' + type }
-                            Text { text: 'Age: ' + age }
-                            Text { text: 'Size: ' + size }
-                        }
-                    }
-                }
-
-                Rectangle {
-                    id: redTestRect
-
-                    anchors.left: dragArea.left
-                    anchors.top: dragArea.bottom
-                    width: 20
-                    height: 20
-
-                    color: "red"
-                }
-            }
-
-            DropArea {
-                id: dropArea
-
-                anchors { fill:tasksColumnItemContainer; margins: 30 }
-
-                Rectangle {
-                    id: dropRectangle
-
-                    anchors.fill: parent
-                    color: "red"
-
-                    states: [
-                      State {
-                          when: dropArea.containsDrag
-                          PropertyChanges {
-                              target: dropRectangle
-                              color: "grey"
-                          }
-                      }
-                    ]
-                }
-
-                onExited: { console.log("ttt") }
-                onEntered: {
-                    console.log("drag.source.parent.DelegateModel.itemsIndex " + drag.source.parent.DelegateModel.itemsIndex)
-                    console.log("dragArea.parent.DelegateModel.itemsIndex " + dragArea.parent.DelegateModel.itemsIndex)
-
-                ////                            visualModel.items.move(
-                ////                                    drag.source.parent.DelegateModel.itemsIndex,
-                ////                                    dragArea.parent.DelegateModel.itemsIndex)
-
-                //                           // visualModel.items.move(3, 4)
-                }
-            }
+    ListModel {
+        id: petsModelInline
+        ListElement {
+            date: "Monday 13th of July "
+            type: "Parrot"
+            age: 12
+            size: "Small"
         }
+        ListElement {
+            date: "Tuesday 14th of July "
+            type: "Turtle"
+            age: 4
+            size: "Small"
+        }
+        ListElement {
+            date: "Wednesday 15th of July "
+            type: "Rabbit"
+            age: 2
+            size: "Small"
+        }
+        ListElement {
+            date: "Thursday 16th of July "
+            type: "Dog"
+            age: 9
+            size: "Medium"
+        }
+        ListElement {
+            date: "Friday 17th of July "
+            type: "Cat"
+            age: 2
+            size: "Medium"
+        }
+
     }
 
 
     DelegateModel {
         id: visualModel
 
-        model: PetsModel {}
-        delegate: dragDelegate
+        //model: PetsModel {}
+        model: petsModelInline
+
+        delegate: DragDelegate {}
     }
 
     ListView {
         id: view
 
         anchors { fill: parent; margins: 2 }
-
-        model: visualModel
-
         spacing: 4
         cacheBuffer: 50
+        model: visualModel
+        orientation: ListView.Horizontal
     }
 }
 
